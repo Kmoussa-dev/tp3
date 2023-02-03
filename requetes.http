@@ -1,0 +1,87 @@
+POST http://localhost:8080/api/auth/inscription
+Content-Type: application/json
+
+{
+  "email": "fred@univ-orleans.fr",
+  "pseudo": "fred",
+  "password": "fred"
+}
+
+> {%
+    client.global.set("fred_token", response.headers.valueOf("Authorization"));
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+###
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "login": "yohan",
+  "password": "pass"
+}
+
+> {%
+    client.global.set("yoh_token", response.headers.valueOf("Authorization"));
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+###
+
+GET http://localhost:8080/api/auth/inscription/fred
+Authorization: {{fred_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+###
+GET http://localhost:8080/api/auth/inscription/fred
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
+
+###
+GET http://localhost:8080/api/jeu/
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+###
+POST http://localhost:8080/api/jeu/partie?prediction=Pile
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+###
+GET http://localhost:8080/api/jeu/partie
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+###
+GET http://localhost:8080/api/jeu/statistiques
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}

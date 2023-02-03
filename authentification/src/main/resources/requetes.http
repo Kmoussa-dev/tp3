@@ -1,0 +1,52 @@
+POST http://localhost:8081/authent/inscription
+Content-Type: application/json
+
+{
+  "email": "fred@univ-orleans.fr",
+  "pseudo": "fred",
+  "password": "fred"
+}
+
+> {%
+    client.global.set("fred_token", response.headers.valueOf("Authorization"));
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 201, "Response status is not 201");
+    });
+%}
+###
+POST http://localhost:8081/authent/login
+Content-Type: application/json
+
+{
+  "login": "yohan",
+  "password": "pass"
+}
+
+> {%
+    client.global.set("yoh_token", response.headers.valueOf("Authorization"));
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+###
+
+GET http://localhost:8081/authent/inscription/fred
+Authorization: {{fred_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+###
+GET http://localhost:8081/authent/inscription/fred
+Authorization: {{yoh_token}}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 403, "Response status is not 403");
+    });
+%}
+
+
