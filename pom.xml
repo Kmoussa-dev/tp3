@@ -18,6 +18,7 @@
     <modules>
         <module>authentification</module>
         <module>pileouface</module>
+        <module>authentification</module>
     </modules>
 
 </project>
