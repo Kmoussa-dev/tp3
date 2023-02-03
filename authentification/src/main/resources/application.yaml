@@ -1,3 +1,12 @@
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    consul:
+      discovery:
+        hostname: localhost
+        port: 8500
+
 jwt:
   private.key: classpath:app.key
   public.key: classpath:app.pub
